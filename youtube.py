@@ -1,3 +1,9 @@
+import requests
+import base64
+
+from PIL import Image
+from io import BytesIO
+
 from pytube import YouTube
 from pytube.exceptions import RegexMatchError
 
@@ -18,6 +24,7 @@ class YouTubeDownloader:
             # past this means the link is valid, but we need to check if the video is also valid
             try:
                 self.yt_obj.check_availability()
+                
                 # past this check means the video is available
                 return True
             except Exception as err:
@@ -30,12 +37,59 @@ class YouTubeDownloader:
 
 
     def GetVideoTitle(self) -> str:
-        # function that returns the video title. This function can't
-        # be called through normal means unless the video is known to already be valid,
-        # so no extra checks are performed
-        # Params: none
-        # return: str - the title of the video
+        """ 
+            function that returns the video title. This function can't
+            be called through normal means unless the video is known to already be valid,
+            so no extra checks are performed
+            Params: none
+            return: str - the title of the video
+        """
         return self.yt_obj.title
+    
+    
+    def GetVideoThumbnail(self) -> bytes:
+        """ 
+            function that returns the video thumbnail in bytes. This function can't
+            be called through normal means unless the video is known to already be valid,
+            so no extra checks are performed
+            Params: none
+            return: bytes - the video's thumbnail in bytes
+        """
+
+        image_bytestream = requests.get(self.yt_obj.thumbnail_url, stream = True).raw
+        
+        image = Image.open(image_bytestream)
+
+        png_image = BytesIO()
+        image.save(png_image, format='PNG')
+        png_image.seek(0)
+        
+        png_image_b64 = base64.b64encode(png_image.read())
+        
+        png_image.close()
+        
+        return png_image_b64
+        
+    
+    def GetVideoResolutions(self) -> list[str]:
+        """
+            function that returns the videos resolutions. This function can't
+            be called through normal means unless the video is known to already be valid,
+            so no extra checks are performed
+            Params: none
+            return: list[str] - a list of all available resolutions
+        """
+        res_list = []
+        
+        video_list = self.yt_obj.streams.filter(only_video = True)
+        
+        for video in video_list:
+            res = f"{video.resolution}@{video.fps}fps"
+            
+            if res not in res_list: # we might have doubles due to multiple video codecs
+                res_list.append(res)
+        
+        return res_list
 
 
     def Download(self, output_path = "") -> None:
