@@ -16,6 +16,8 @@ If you're like me and want to provide a safe, ad-free video downloading experien
 <h2 align="center">✨Current Features✨</h2>
 <ul>
   <li>Download any YouTube video (video or short)</li>
+  <li>Displays details about the video URL inserted.</li>
+  <li>Download anywhere on your PC.</li>
 </ul>
 
 ###
@@ -53,7 +55,7 @@ If you're like me and want to provide a safe, ad-free video downloading experien
 
 <h2 align="center">🐞Known Bugs🐞</h2>
 <ul>
-  <li>For some reason, you can't right-click -> paste the video link. I'll see why this is and hopefully fix it. For now, just use CTRL+V.</li>
+  <li>Sadly, not all video resolutions are available sometimes. This is apparently due to the API that pytube uses to fetch this data. For the time being, I'll leave this as-is. In the future, I might look into YouTube's API to fetch the video data, which will hopefully include all video resolutions.</li>
 </ul>
 
 ###
